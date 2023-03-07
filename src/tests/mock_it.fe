@@ -1,0 +1,42 @@
+use ingot::dstest::dstest::*
+use ingot::blimpopo::blimpopo::BMP_Token
+
+pub contract MockIt {
+    
+    t:DSTest ;
+    bmp_token:BMP_Token ;
+    
+    pub fn __init__(mut self, mut ctx: Context) {
+        self.t = DSTest::new();
+        //self.t.gas_state = __gas() ;
+        self.bmp_token = BMP_Token.create2(ctx,0,52);
+    	// get gas used for the BMP_Token constructor
+    	//let gas_used: u256 = self.t.gas_used(current_gas: __gas());        
+    }
+    
+    pub fn get_passes(self) -> u32 {
+        return self.t.passes ;
+    }
+    
+    
+    pub fn test_initialize(mut self, mut ctx: Context) {
+        ctx.emit(Log(text: "************************** Test Initialize **************************"));
+        // before initialize no tokens
+        let total_supply: u256 = self.bmp_token.totalSupply();
+        ctx.emit(Log_named_u256 (text:"Total Supply = ", a256: total_supply));
+        ctx.emit(Log(text: "************************** test emit **************************"));
+        //self.t.assert_false(ctx, untruth: total_supply > 0) ;
+        //self.t.has_failed() ; // stop here if failed already
+        // now initialize the contract
+        // self.t.gas_used(current_gas: __gas());
+        //self.bmp_token.initialize(ctx);
+        // let gas_used: u256 = self.t.gas_used(current_gas: __gas());
+        // ctx.emit(Log_named_u256(text:"Contract initialized. Gas used =", a256: gas_used));
+        ctx.emit(Log_named_u256(text:"Contract initialized. Total supply =", a256: self.bmp_token.totalSupply()));
+        //self.t.assert_true(ctx, truth: total_supply > 0) ;
+        //self.t.has_failed() ; // if initialise fails stop here
+        //self.t.assert_eq_u32(ctx, expected_u32: 2, actual_u32: self.t.passes) ;
+    }
+    
+    
+}

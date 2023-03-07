@@ -1,0 +1,21 @@
+use ingot::dstest::dstest::*
+use ingot::tests::mock_it::MockIt 
+
+
+contract TestRunner {
+
+    mock: MockIt ;
+    t:DSTest ;
+        
+    pub fn __init__(mut self, mut ctx: Context) {
+        //self.t = DSTest::new();
+        //self.mock = MockIt.create2(ctx,0,52);
+    }
+
+    pub unsafe fn run_tests(mut self, mut ctx: Context) {
+        ctx.emit(Log(text: "************************** Start Tests **************************"));
+        //self.mock.test_initialize(ctx) ;
+        //self.t.assert_eq_u32(ctx,expected_u32: 2, actual_u32: self.mock.get_passes()) ;
+        ctx.emit(Log(text: "************************** End Tests **************************"));
+    }
+}

@@ -1,0 +1,6 @@
+  43:     0x7f87f9577d90 - __libc_start_call_main
+                               at ./csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+  44:     0x7f87f9577e40 - __libc_start_main_impl
+                               at ./csu/../csu/libc-start.c:392:3
+
+                               No main.fe bug.

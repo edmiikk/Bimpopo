@@ -1,0 +1,182 @@
+// use std::evm::* // see https://docs.soliditylang.org/en/v0.8.11/yul.html#evm-dialect
+
+// SPDX-License-Identifier: MIT
+//Copyright (c) 2023 netvisionit.eth
+//Copyright (c) 2123 DappHub (GPL 2.0 licence)
+
+// DSTest sol contract events:
+//    event log                    (string);
+//    event logs                   (bytes);
+//
+//    event log_address            (address);
+//    event log_bytes32            (bytes32);
+//    event log_int                (int);
+//    event log_uint               (uint);
+//    event log_bytes              (bytes);
+//    event log_string             (string);
+//
+//    event log_named_address      (string key, address val);
+//    event log_named_bytes32      (string key, bytes32 val);
+//    event log_named_decimal_int  (string key, int val, uint decimals);
+//    event log_named_decimal_uint (string key, uint val, uint decimals);
+//    event log_named_int          (string key, int val);
+//    event log_named_uint         (string key, uint val);
+//    event log_named_bytes        (string key, bytes val);
+//    event log_named_string       (string key, string val);
+
+
+
+pub struct Log {
+    pub text: String<100>
+}
+
+impl Emittable for Log {
+	fn emit() {
+		let x: u256 = 0 ;
+	}
+}
+
+pub struct Log_named_u256 {
+    pub text: String<100>
+    pub a256: u256
+}
+
+pub struct Log_compare_u32 {
+    pub text: String<100> ;
+    pub expected_u32: u32 ;
+    pub actual_u32: u32 ;
+}
+
+
+
+pub struct DSTest {
+
+    IS_TEST: bool;
+    pub _failed: bool;
+    pub passes: u32 ;
+    pub failures: u32 ;
+    pub gas_state: u256 ;
+
+    pub fn new() -> DSTest {
+        return DSTest(IS_TEST: true, _failed: false, passes: 0 , failures: 0, gas_state: 9) ;
+    }
+    
+    pub fn gas_used(mut self, current_gas: u256) -> u256 {
+    	// calculates difference between available gas now and that stored in gas state 
+    	// updated gas_state to the current gas
+    	if (self.gas_state < current_gas) {
+    		self.gas_state = current_gas ;
+    		return 0 ;
+    	}
+    	let gas_used: u256 = self.gas_state - current_gas ;
+    	self.gas_state = current_gas ;
+    	return gas_used ;
+    }
+    
+    pub unsafe fn has_failed(mut self) {
+        if (self._failed) {
+            //stop() ;
+        }
+    }
+    
+    pub fn failed(self) -> bool {
+        return self._failed ;
+    }
+    
+    
+    fn _fail(mut self)  {
+        //if (hasHEVMContext()) {
+        //    (bool status, ) = HEVM_ADDRESS.call(
+        //        abi.encodePacked(
+        //            bytes4(keccak256("store(address,bytes32,bytes32)")),
+        //            abi.encode(HEVM_ADDRESS, bytes32("failed"), bytes32(uint256(0x01)))
+        //        )
+        //    );
+        //    status; // Silence compiler warnings
+        //}
+        self._failed = true;
+        self.failures += 1 ;
+    }
+    
+    
+    //function assertTrue(bool condition) internal {
+    //    if (!condition) {
+    //        emit log("Error: Assertion Failed");
+    //        fail();
+    //    }
+    //}
+    
+    pub fn assert_true(mut self, mut ctx: Context, truth: bool) {
+        if (truth == false) {
+            let last_error: String<100> = "Error: Assertion Failed condition is false" ;
+            ctx.emit(Log(text: last_error));
+            self._fail();
+        } else {
+            self.passes += 1;
+        }
+    }
+    
+    pub fn assert_false(mut self, mut ctx: Context, untruth: bool) {
+        if (untruth == true) {
+            let last_error: String<100> = "Error: Assertion Failed condition is true" ;
+            ctx.emit(Log(text: last_error));
+            self._fail();
+        } else {
+            self.passes += 1;
+        }         
+    }   
+    
+    pub fn assert_eq_u32(mut self, mut ctx: Context, expected_u32: u32, actual_u32: u32) {
+        if (expected_u32 != actual_u32) {
+            //let last_error: String<100> = "Error: Assertion Failed. " ;
+            ctx.emit(Log_compare_u32(text: "Error: Assertion Failed. ", expected_u32, actual_u32));
+            self._fail();
+        } else {
+            self.passes += 1;
+        } 
+    } 
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

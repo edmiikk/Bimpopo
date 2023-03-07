@@ -1,0 +1,226 @@
+use std::context::Context
+
+// SPDX-License-Identifier: MIT
+//Copyright (c) 2023 edmiikk.eth
+//Copyright (c) 2017-2023 OpenZeppelin
+//
+//import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20SnapshotUpgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-ERC20PermitUpgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20FlashMintUpgradeable.sol";
+//import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+//import "../../utils/AddressUpgradeable.sol";
+//
+// ERC20 API
+//function name() public view returns (string) -> OZ 
+//function symbol() public view returns (string)
+//function decimals() public view returns (uint8)
+//function totalSupply() public view returns (uint256)
+//function balanceOf(address _owner) public view returns (uint256 balance)
+//function transfer(address _to, uint256 _value) public returns (bool success)
+//function transferFrom(address _from, address _to, uint256 _value) public returns (bool success)
+//function approve(address _spender, uint256 _value) public returns (bool success)
+//function allowance(address _owner, address _spender) public view returns (uint256 remaining)
+//*/
+
+// Upgradeable 
+
+//interface IERC20Upgradeable {
+
+// event Transfer(address indexed from, address indexed to, uint256 value);
+// emit this structure below
+
+struct Transfer {
+    #indexed
+    pub from: address
+    #indexed
+    pub to: address
+    pub value: u256
+}
+
+pub struct Initialized { // emitted after an initialize or re-initialize
+	pub version: u8
+}
+
+
+contract BMP_Token {
+    _name: String<100>
+	_balances: Map<address, u256>
+	SNAPSHOT_ROLE: u256 
+    PAUSER_ROLE: u256
+    MINTER_ROLE: u256
+	
+	_initialized: u8  // contract has been initialized.
+	_initializing: bool  // contract is in the process of being initialized
+
+	
+	pub fn __init__(mut self, mut ctx: Context) {
+		// Roles here as FNYI
+		self.SNAPSHOT_ROLE = 53;
+		//self.SNAPSHOT_ROLE = keccak256((self.SNAPSHOT_ROLE,self.SNAPSHOT_ROLE).abi_encode());
+		//self.PAUSER_ROLE = 50 ;
+		//self.PAUSER_ROLE = keccak256((self.PAUSER_ROLE,self.PAUSER_ROLE).abi_encode());		
+		//self.MINTER_ROLE = 48 ;
+		//self.MINTER_ROLE = keccak256((self.MINTER_ROLE,self.MINTER_ROLE).abi_encode());		
+		self._disableInitializers(ctx);
+	}
+	
+	
+	 // /**
+     //* @dev Locks the contract, preventing any future reinitialization. This cannot be part of an initializer call.
+     //* Calling this in the constructor of a contract will prevent that contract from being initialized or reinitialized
+     //* to any version. It is recommended to use this to lock implementation contracts that are designed to be called
+     //* through proxies.
+     //*
+     //* Emits an {Initialized} event the first time it is successfully executed.
+     //*/
+    //function _disableInitializers() internal virtual {
+    //    require(!_initializing, "Initializable: contract is initializing");
+    //    if (_initialized < type(uint8).max) {
+    //        _initialized = type(uint8).max;
+    //        emit Initialized(type(uint8).max);
+    //    }
+    //}
+	fn _disableInitializers(mut self, mut ctx: Context) {
+		assert self._initializing == false, "Initializable: contract is initializing"
+		if (self._initialized < 255) {
+			self._initialized = 255;
+			ctx.emit(Initialized(version: 255));
+		}	
+	}
+	
+	//modifier initializer() {
+    //    bool isTopLevelCall = !_initializing;
+    //    require(
+    //        (isTopLevelCall && _initialized < 1) || (!AddressUpgradeable.isContract(address(this)) && _initialized == 1),
+    //        "Initializable: contract is already initialized"
+    //    );
+    //    _initialized = 1;
+    //    if (isTopLevelCall) {
+    //        _initializing = true;
+    //    }
+    //    _;
+    //    if (isTopLevelCall) {
+    //        _initializing = false;
+    //        emit Initialized(1);
+    //    }
+    //}
+	
+	fn _initializer(mut self, mut ctx: Context) {
+		self._disableInitializers(ctx);
+		let isTopLevelCall: bool = self._initializing == false;
+
+		// TODO get code length for the ctx.msg_sender
+		//assert (isTopLevelCall and self._initialized < 1) or ((ctx.msg_sender().length == 0) and (self._initialized == 1)),"Initializable: contract is already initialized"
+
+		assert (isTopLevelCall and self._initialized < 1),"Initializable: contract is already initialized"
+		self._initialized = 1;
+		if (isTopLevelCall) {
+			self._initializing = true;
+		}
+		if (isTopLevelCall) {
+			self._initializing = false;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	//function initialize() initializer public {
+    //    __ERC20_init("MyToken", "BMP");
+    //    __ERC20Burnable_init();
+    //    __ERC20Snapshot_init();
+    //    __AccessControl_init();
+    //    __Pausable_init();
+    //    __ERC20Permit_init("MyToken");
+    //    __ERC20Votes_init();
+    //    __ERC20FlashMint_init();
+
+    //    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    //    _grantRole(SNAPSHOT_ROLE, msg.sender);
+    //    _grantRole(PAUSER_ROLE, msg.sender);
+    //    _mint(msg.sender, 404 * 10 ** decimals());
+    //    _grantRole(MINTER_ROLE, msg.sender);
+    //}
+	
+	pub fn initialize(mut self, mut ctx: Context) {
+		self._initializer(ctx);
+	
+	}
+	
+	
+	//====================================== ERC 20 ==========================
+	pub fn name(self) -> String<100> {
+        return self._name.to_mem();
+    }
+    
+    pub fn transfer(mut self, mut ctx: Context, recipient: address, value: u256) -> bool {
+        self._transfer(ctx, sender: ctx.msg_sender(), recipient, value);
+        return true;
+    }
+    
+    fn _transfer(mut self, mut ctx: Context, sender: address, recipient: address, value: u256) {
+        assert sender != address(0)
+        assert recipient != address(0)
+        _before_token_transfer(from: sender, to: recipient, value)
+        assert self._balances[sender] >= value // sol => , "ERC20: transfer amount exceeds balance");
+        self._balances[sender] = self._balances[sender] - value
+        self._balances[recipient] = self._balances[recipient] + value
+        ctx.emit(Transfer(from: sender, to: recipient, value))
+        _after_token_transfer(from: sender, to: recipient, value);
+    }
+    
+    fn _before_token_transfer(from: address, to: address, _ value: u256) {}
+    
+    fn _after_token_transfer(from: address, to: address, _ value: u256) {}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

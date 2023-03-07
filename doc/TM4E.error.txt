@@ -1,0 +1,11 @@
+An error occurred while collecting items to be installed
+session context was:(profile=SDKProfile, phase=org.eclipse.equinox.internal.p2.engine.phases.Collect, operand=, action=).
+Problems downloading artifact: osgi.bundle,org.eclipse.tm4e.core,0.5.2.202301301533.
+Error reading signed content:/tmp/signatureFile6986067660268629420.jar
+An error occurred while processing the signatures for the file: /tmp/signatureFile6986067660268629420.jar
+Problems downloading artifact: osgi.bundle,org.eclipse.tm4e.ui,0.6.2.202301301533.
+Error reading signed content:/tmp/signatureFile12147302178751824223.jar
+An error occurred while processing the signatures for the file: /tmp/signatureFile12147302178751824223.jar
+Problems downloading artifact: org.eclipse.update.feature,org.eclipse.tm4e.feature,0.5.3.202301301533.
+Error reading signed content:/tmp/signatureFile4258280804297213625.jar
+An error occurred while processing the signatures for the file: /tmp/signatureFile4258280804297213625.jar
